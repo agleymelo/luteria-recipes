@@ -2,10 +2,10 @@ import { ReactNode, createContext, useState, useEffect } from 'react'
 
 import { supabase } from '../../services/supabase'
 
-import type { Session } from '@supabase/supabase-js'
+import type { User } from '@supabase/supabase-js'
 
 type AuthContextType = {
-  session: Session | null
+  user: User | null
   handleSignInWithGoogle: () => Promise<void>
   handleSignOut: () => Promise<void>
 }
@@ -17,34 +17,32 @@ type AuthContextProps = {
 }
 
 export function AuthContextProvider({ children }: AuthContextProps) {
-  const [session, setSession] = useState<Session | null>(null)
+  const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    setSession(supabase.auth.session())
+    // Check if existe a active session and sets user
+    const session = supabase.auth.session()
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
+    setUser(session?.user ?? null)
+
+    // Event Lister for changes on auth (SignIn, signOut, etc..)
+    const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setUser(session?.user ?? null)
     })
-  }, [session])
+
+    return () => {
+      listener?.unsubscribe()
+    }
+  }, [])
 
   async function handleSignInWithGoogle() {
     try {
-      const { session, error } = await supabase.auth.signIn({
+      const { error } = await supabase.auth.signIn({
         provider: 'google'
       })
 
-      if (error) throw error
-
-      const { user } = session as Session
-
-      if (!user) return
-
-      if (session && user) {
-        if (user.app_metadata.provider === 'google') {
-          if (!user.email || !user.user_metadata.full_name || !user.user_metadata.avatar_url) {
-            throw new Error('Missing information from Google Account.')
-          }
-        }
+      if (error) {
+        alert(error)
       }
     } catch (err) {
       console.log(err.error_description || err.message)
@@ -53,9 +51,7 @@ export function AuthContextProvider({ children }: AuthContextProps) {
 
   async function handleSignOut() {
     await supabase.auth.signOut()
-
-    setSession(null)
   }
 
-  return <AuthContext.Provider value={{ session, handleSignInWithGoogle, handleSignOut }}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={{ user, handleSignInWithGoogle, handleSignOut }}>{children}</AuthContext.Provider>
 }

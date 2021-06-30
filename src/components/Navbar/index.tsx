@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useHistory } from 'react-router-dom'
+
 import { Box, Flex } from '@chakra-ui/layout'
 import {
   Button,
@@ -23,6 +25,7 @@ import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 
 import { AiOutlineUser } from 'react-icons/ai'
 import { FcGoogle } from 'react-icons/fc'
+import { HiSearch, HiPlus } from 'react-icons/hi'
 
 import { useAuth } from '../../hook/useAuth'
 
@@ -34,7 +37,9 @@ export function Navbar() {
 
   const [isOpenModal, setIsOpenModal] = useState(false)
 
-  const { session, handleSignInWithGoogle, handleSignOut } = useAuth()
+  const { user, handleSignInWithGoogle, handleSignOut } = useAuth()
+
+  const history = useHistory()
 
   const isLightMode = colorMode === 'light'
 
@@ -60,7 +65,7 @@ export function Navbar() {
             />
 
             <MenuList>
-              {session ? (
+              {user ? (
                 <MenuGroup title="Profile">
                   <MenuItem>Profile</MenuItem>
                   <MenuItem color="red.500" onClick={toggleModal}>
@@ -92,6 +97,10 @@ export function Navbar() {
 
         {/* Desktop */}
         <NavDesktop>
+          <Flex>
+            <HiSearch size={18} color={`${isLightMode ? '#000' : '#fff'}`} />
+          </Flex>
+
           <Menu closeOnSelect={true} placement="bottom-end">
             <MenuButton
               as={IconButton}
@@ -110,13 +119,23 @@ export function Navbar() {
               }}
             />
             <MenuList>
-              {session ? (
-                <MenuGroup title="Profile">
-                  <MenuItem>Profile</MenuItem>
-                  <MenuItem color="red.500" onClick={toggleModal}>
-                    Sign Out
-                  </MenuItem>
-                </MenuGroup>
+              {user ? (
+                <>
+                  <MenuGroup title="Recipe">
+                    <MenuItem icon={<HiPlus />} onClick={() => history.push('/recipes/create')}>
+                      Create new Recipe
+                    </MenuItem>
+                  </MenuGroup>
+
+                  <MenuDivider />
+
+                  <MenuGroup title="Profile">
+                    <MenuItem>Profile</MenuItem>
+                    <MenuItem color="red.500" onClick={toggleModal}>
+                      Sign Out
+                    </MenuItem>
+                  </MenuGroup>
+                </>
               ) : (
                 <>
                   <MenuItem onClick={toggleModal}>Sign In</MenuItem>
@@ -144,10 +163,10 @@ export function Navbar() {
       <Modal isOpen={isOpenModal} onClose={() => setIsOpenModal(false)} onEsc={() => setIsOpenModal(false)} isCentered>
         <ModalOverlay />
         <ModalContent padding="0.8rem">
-          <ModalHeader textAlign="center">{session ? 'Do you want to log out?' : 'Sign In'}</ModalHeader>
+          <ModalHeader textAlign="center">{user ? 'Do you want to log out?' : 'Sign In'}</ModalHeader>
           <ModalCloseButton _focus={{}} _hover={{ background: 'gray.200', transition: 'background 0.4s linear' }} />
           <ModalBody>
-            {session ? (
+            {user ? (
               <></>
             ) : (
               <>
@@ -157,7 +176,7 @@ export function Navbar() {
           </ModalBody>
 
           <ModalFooter display="flex" justifyContent="center" alignItems="center">
-            {session ? (
+            {user ? (
               <>
                 <Button
                   bgColor="transparent"

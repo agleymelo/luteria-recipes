@@ -3,8 +3,6 @@ import { ReactNode } from 'react'
 import { Box, Flex, ListItem, List } from '@chakra-ui/layout'
 import { Text } from '@chakra-ui/react'
 
-import { HiSearch } from 'react-icons/hi'
-
 type NavDesktopProps = {
   children: ReactNode
 }
@@ -60,10 +58,6 @@ export function NavDesktop({ children }: NavDesktopProps) {
             >
               Contact
             </Text>
-          </ListItem>
-
-          <ListItem>
-            <HiSearch size={18} color="#000" />
           </ListItem>
         </List>
       </Box>
