@@ -1,8 +1,8 @@
 import { ReactNode, createContext, useState, useEffect } from 'react'
 
-import { supabase } from '../../services/supabase'
-
 import type { User } from '@supabase/supabase-js'
+
+import { supabase } from '../../services/supabase'
 
 type AuthContextType = {
   user: User | null
@@ -21,9 +21,9 @@ export function AuthContextProvider({ children }: AuthContextProps) {
 
   useEffect(() => {
     // Check if existe a active session and sets user
-    const session = supabase.auth.session()
+    const current_user = supabase.auth.user()
 
-    setUser(session?.user ?? null)
+    setUser(current_user)
 
     // Event Lister for changes on auth (SignIn, signOut, etc..)
     const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -37,9 +37,14 @@ export function AuthContextProvider({ children }: AuthContextProps) {
 
   async function handleSignInWithGoogle() {
     try {
-      const { error } = await supabase.auth.signIn({
-        provider: 'google'
-      })
+      const { error } = await supabase.auth.signIn(
+        {
+          provider: 'google'
+        },
+        {
+          redirectTo: '/'
+        }
+      )
 
       if (error) {
         alert(error)

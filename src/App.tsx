@@ -1,20 +1,20 @@
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter } from 'react-router-dom'
 
-import { ThemeProvider } from "./theme/ThemeProvider";
-import { AuthContextProvider } from "./context/AuthContext";
+import { ThemeProvider } from './theme/ThemeProvider'
+import { AuthContextProvider } from './context/AuthContext'
 
-import { Routes } from "./routes";
+import { Routes } from './routes'
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthContextProvider>
+    <AuthContextProvider>
+      <BrowserRouter>
         <ThemeProvider>
           <Routes />
         </ThemeProvider>
-      </AuthContextProvider>
-    </BrowserRouter>
-  );
+      </BrowserRouter>
+    </AuthContextProvider>
+  )
 }
 
-export default App;
+export default App

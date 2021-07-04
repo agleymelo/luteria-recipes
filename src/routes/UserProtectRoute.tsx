@@ -13,10 +13,11 @@ export function UserProtectRoute({ component: Component, ...rest }: UserProtectR
     <RouteDOM
       {...rest}
       render={({ location }) =>
-        user ? (
+        !!user ? (
           <Component />
         ) : (
           <Redirect
+            push
             to={{
               pathname: '/',
               state: {

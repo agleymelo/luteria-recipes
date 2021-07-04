@@ -2,12 +2,15 @@ import { ReactNode } from 'react'
 
 import { Box, Flex, ListItem, List } from '@chakra-ui/layout'
 import { Text } from '@chakra-ui/react'
+import { useHistory } from 'react-router-dom'
 
 type NavDesktopProps = {
   children: ReactNode
 }
 
 export function NavDesktop({ children }: NavDesktopProps) {
+  const history = useHistory()
+
   return (
     <Flex width="100%" display={['none', 'none', 'flex', 'flex']} alignItems="center" justifyContent="center">
       <Box width="25%">
@@ -21,6 +24,7 @@ export function NavDesktop({ children }: NavDesktopProps) {
               as="span"
               fontSize="0.8rem"
               cursor="pointer"
+              onClick={() => history.push('/')}
               _hover={{ borderBottom: '1px solid #000', transition: 'all 0.3s linear' }}
             >
               Home
@@ -32,6 +36,7 @@ export function NavDesktop({ children }: NavDesktopProps) {
               as="span"
               fontSize="0.8rem"
               cursor="pointer"
+              onClick={() => history.push('/recipes')}
               _hover={{ borderBottom: '1px solid #000', transition: 'all 0.3s linear' }}
             >
               Recipes
